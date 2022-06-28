@@ -1,0 +1,24 @@
+// prettier-ignore
+{
+  "typeRoots": ["./src/@types"],
+  "compilerOptions": {
+   "target": "esnext",
+    "lib": ["es2017"],
+    "jsx": "react-native",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "types": ["react-native", "jest", "styled-components-react-native"],
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "useUnknownInCatchVariables": false,
+    "esModuleInterop": true,
+    "strict": true,                             
+    "skipLibCheck": false,  
+  },
+  "exclude": [
+    "node_modules", "babel.config.js", "metro.config.js", "jest.config.js"
+  ]
+}
