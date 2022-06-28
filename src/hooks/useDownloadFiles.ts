@@ -2,6 +2,7 @@ import variables from '../config/variables';
 import RNFS from 'react-native-fs';
 import {api} from '../services/api';
 import {useCloudAuth} from '../contexts/CloudContext';
+import RNFetchBlob from 'rn-fetch-blob';
 import {useCallback, useState} from 'react';
 import {PermissionsAndroid, Platform, ToastAndroid} from 'react-native';
 
@@ -131,6 +132,14 @@ export const useDownloadFiles = () => {
                   ToastAndroid.BOTTOM,
                   25,
                   50,
+                );
+
+                RNFetchBlob.android.actionViewIntent(
+                  `${RNFS.DownloadDirectoryPath}/${fileName.replace(
+                    /\s/g,
+                    '',
+                  )}.apk`,
+                  'application/vnd.android.package-archive',
                 );
 
                 return;
