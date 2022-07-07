@@ -22,7 +22,11 @@ export const Container = styled.TouchableOpacity<ContainerProps>`
   justify-content: center;
 `;
 
-export const TitleButton = styled.Text`
+type TitleButtonProps = {
+  textColor?: string;
+};
+
+export const TitleButton = styled.Text<TitleButtonProps>`
   font-family: 'Nunito';
   font-style: normal;
   font-weight: 600;
@@ -31,7 +35,7 @@ export const TitleButton = styled.Text`
   text-align: center;
   letter-spacing: ${RFValue(-0.333333)}px;
 
-  color: #616161;
+  color: ${({textColor}) => textColor ?? '#616161'};
 
-  margin-right: 10px;
+  margin-right: ${RFValue(5)}px;
 `;

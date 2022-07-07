@@ -1,12 +1,26 @@
-import styled from 'styled-components/native';
+import styled, {css} from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
-export const Container = styled.View`
-  width: 100%;
-  height: 190px;
+type ContainerProps = {
+  isTV?: boolean;
+};
+
+export const Container = styled.View<ContainerProps>`
+  ${({isTV}) =>
+    isTV
+      ? css`
+          width: 47.5%;
+        `
+      : css`
+          width: 100%;
+        `}
+
+  height: ${RFValue(160)}px;
 
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 10px;
+
+  margin: ${RFValue(5)}px;
 
   elevation: 2;
 `;
@@ -35,13 +49,20 @@ export const FileIcon = styled.View`
   elevation: 2;
 `;
 
+export const IconFile = styled.Image`
+  width: 100%;
+  height: 100%;
+
+  border-radius: ${RFValue(5)}px;
+`;
+
 export const FileName = styled.Text`
   font-family: 'Spartan';
   font-style: normal;
   font-weight: 700;
-  font-size: 20px;
-  line-height: 22px;
-  letter-spacing: -0.333333px;
+  font-size: ${RFValue(20)}px;
+  line-height: ${RFValue(22)}px;
+  letter-spacing: ${RFValue(-0.333333)}px;
 
   color: #616161;
 `;
@@ -55,28 +76,37 @@ export const BoxFileDetails = styled.View`
 export const BoxFileSize = styled.View`
   width: 70px;
 
-  align-items: center;
-  justify-content: center;
+  margin-top: ${RFValue(5)}px;
 
   align-items: center;
+  justify-content: center;
 `;
 
 export const FileSizeText = styled.Text`
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
-  font-size: 22px;
-  line-height: 26px;
+  font-size: ${RFValue(15)}px;
+  line-height: ${RFValue(19)}px;
 
   color: #4d5dfa;
+`;
+
+export const ProgressBox = styled.View`
+  width: 200px;
+  height: 10px;
+
+  justify-content: center;
+
+  margin: ${RFValue(5)}px;
 `;
 
 export const SubText = styled.Text`
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
-  font-size: 12px;
-  line-height: 14px;
+  font-size: ${RFValue(10)}px;
+  line-height: ${RFValue(14)}px;
 
   color: #616161;
 `;

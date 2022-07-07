@@ -9,10 +9,9 @@ const Stack = createNativeStackNavigator();
 export const AuthRoutes: React.FC = () => {
   return (
     <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <Stack.Screen name="SignIn" component={Dashboard} />
+      initialRouteName="Dashboard"
+      screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Dashboard" component={Dashboard} />
     </Stack.Navigator>
   );
 };

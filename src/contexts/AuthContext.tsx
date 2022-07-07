@@ -8,6 +8,10 @@ import React, {
 import AsyncStorage from '@react-native-community/async-storage';
 import {Buffer} from 'buffer';
 import {api} from '../services/api';
+import {
+  DropdownAlertTypeMessage,
+  useDropdownAlert,
+} from './DropdownAlertContext';
 
 export type UserAuthProps = {
   name: string;
@@ -20,15 +24,15 @@ interface AuthState {
 }
 
 export interface SignInCredentials {
-  email: string;
+  username: string;
   password: string;
 }
 
 export type UserProps = {
-  id: string;
-  isAdmin: boolean;
   name: string;
   email: string;
+  roles: string;
+  cloudKeyId: string;
 };
 
 interface AuthContextProps {
@@ -41,48 +45,67 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
 export const AuthProvider: React.FC = ({children}) => {
+  //@ts-ignore
+  const {ref} = useDropdownAlert();
+
   const [data, setData] = useState<AuthState>({} as AuthState);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStorageData(): Promise<void> {
       const [token, user] = await AsyncStorage.multiGet([
-        '@filedownload:token',
-        '@filedownload:user',
+        '@rocketcloud:token',
+        '@rocketcloud:user',
       ]);
 
-      if (token[1] && user[1])
+      if (token[1] && user[1]) {
         setData({token: token[1], user: JSON.parse(user[1])});
+      }
+
       setLoading(false);
     }
 
     loadStorageData();
   }, []);
 
-  const signIn = useCallback(async ({email, password}: SignInCredentials) => {
-    const credentials = Buffer.from(`${email}:${password}`).toString('base64');
+  const signIn = useCallback(
+    async ({username, password}: SignInCredentials) => {
+      try {
+        setLoading(true);
 
-    const response = await api.post('/users/singin', null, {
-      headers: {
-        Authorization: `Basic ${credentials}`,
-      },
-    });
+        const credentials = Buffer.from(`${username}:${password}`).toString(
+          'base64',
+        );
 
-    const {token, user} = response.data;
+        const response = await api.post('/users/auth', null, {
+          headers: {Authorization: `Basic ${credentials}`},
+        });
 
-    await AsyncStorage.multiSet([
-      ['@filedownload:token', token],
-      ['@filedownload:user', JSON.stringify(user)],
-    ]);
+        const {token, user} = response.data;
 
-    setData({token, user});
-  }, []);
+        await AsyncStorage.multiSet([
+          ['@rocketcloud:token', token],
+          ['@rocketcloud:user', JSON.stringify(user)],
+        ]);
+
+        setData({token, user});
+        setLoading(false);
+      } catch (err) {
+        ref.current.alertWithType(
+          DropdownAlertTypeMessage.Error,
+          'Error!!!',
+          `Erro ao efetuar login Erro: ${err.message}`,
+        );
+
+        setLoading(false);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.multiRemove([
-      '@filedownload:token',
-      '@filedownload:user',
-    ]);
+    await AsyncStorage.multiRemove(['@rocketcloud:token', '@rocketcloud:user']);
 
     setData({} as AuthState);
   }, []);
@@ -97,7 +120,9 @@ export const AuthProvider: React.FC = ({children}) => {
 export function useAuth(): AuthContextProps {
   const context = useContext(AuthContext);
 
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
 
   return context;
 }

@@ -1,13 +1,13 @@
 import React from 'react';
 import {RFValue} from 'react-native-responsive-fontsize';
-import {useCloudAuth} from '../../contexts/CloudContext';
 
+import {useAuth} from '../../contexts/AuthContext';
 import {MaterialIcons} from '../Icons';
 
 import * as S from './styles';
 
 export const Header: React.FC = () => {
-  const {signOut} = useCloudAuth();
+  const {signOut} = useAuth();
 
   return (
     <S.Container>

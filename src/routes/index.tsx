@@ -1,13 +1,12 @@
 import React from 'react';
 import {ActivityIndicator, View} from 'react-native';
 
-import {useCloudAuth} from '../contexts/CloudContext';
+import {useAuth} from '../contexts/AuthContext';
 import {AuthRoutes} from './auth.routes';
 import {PublicRoutes} from './public.routes';
 
 export const Routes: React.FC = () => {
-  // const {loading, user} = useAuth();
-  const {loading, cloudKeyId} = useCloudAuth();
+  const {loading, user} = useAuth();
 
   if (loading) {
     return (
@@ -17,5 +16,5 @@ export const Routes: React.FC = () => {
     );
   }
 
-  return !cloudKeyId ? <PublicRoutes /> : <AuthRoutes />;
+  return !user ? <PublicRoutes /> : <AuthRoutes />;
 };

@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import {api} from '../services/api';
+import {useDropdownAlert} from './DropdownAlertContext';
 
 interface AuthState {
   cloudKeyId: string;
@@ -26,6 +27,9 @@ interface CloudContextProps {
 const CloudContext = createContext<CloudContextProps>({} as CloudContextProps);
 
 export const CloudProvider: React.FC = ({children}) => {
+  //@ts-ignore
+  const {ref} = useDropdownAlert();
+
   const [data, setData] = useState<AuthState>({} as AuthState);
   const [loading, setLoading] = useState(true);
 
@@ -45,15 +49,25 @@ export const CloudProvider: React.FC = ({children}) => {
 
   const signIn = useCallback(
     async ({cloudKeyId}: ValidationCloudAccessProps) => {
-      await api.get('/cloud/access/', {
-        headers: {cloudkeyId: cloudKeyId},
-      });
-      //3e8522f6-7f96-42e0-b1a4-89c82f801fa6
+      try {
+        setLoading(true);
+        await api.get('/cloud/access/', {
+          headers: {cloudkeyId: cloudKeyId},
+        });
+        //3e8522f6-7f96-42e0-b1a4-89c82f801fa6
 
-      await AsyncStorage.setItem('@rocketcloud:cloudKeyId', cloudKeyId);
+        await AsyncStorage.setItem('@rocketcloud:cloudKeyId', cloudKeyId);
 
-      setData({cloudKeyId});
+        ref.current.alertWithType('success', 'Login realizado com sucesso...');
+
+        setData({cloudKeyId});
+
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

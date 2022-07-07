@@ -2,8 +2,8 @@ import styled from 'styled-components/native';
 import {RFValue} from 'react-native-responsive-fontsize';
 
 export const Container = styled.View`
-  width: 336px;
-  height: 43px;
+  width: ${RFValue(304)}px;
+  height: 45px;
 
   background: #edefff;
 
@@ -12,9 +12,10 @@ export const Container = styled.View`
   elevation: 2;
 
   flex-direction: row;
-
   align-items: center;
   justify-content: center;
+
+  margin: ${RFValue(10)}px;
 `;
 
 export const TitleTextArea = styled.Text`

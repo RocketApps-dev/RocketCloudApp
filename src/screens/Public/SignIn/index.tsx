@@ -1,44 +1,60 @@
 import React from 'react';
 import {useForm} from 'react-hook-form';
-import {KeyboardAvoidingView, Platform, ToastAndroid} from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ToastAndroid,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 import {logos} from '../../../assets';
 import {Input} from '../../../components/Input';
+import {useAuth} from '../../../contexts/AuthContext';
 import {LargeButton} from '../../../components/LargeButton';
-import {useCloudAuth} from '../../../contexts/CloudContext';
+import {
+  DropdownAlertTypeMessage,
+  useDropdownAlert,
+} from '../../../contexts/DropdownAlertContext';
 
 import * as S from './styles';
 
 type SignInProps = {
-  cloudKeyId: string;
+  username: string;
+  password: string;
 };
 
 export const SignIn: React.FC = () => {
+  //@ts-ignore
+  const {ref} = useDropdownAlert();
   const {control, handleSubmit} = useForm();
-  const {signIn} = useCloudAuth();
+  const {signIn} = useAuth();
 
   const handleSignInAccount = async (data: any) => {
-    const {cloudKeyId} = data as SignInProps;
+    const {username, password} = data as SignInProps;
 
-    if (!cloudKeyId) {
-      ToastAndroid.showWithGravity(
-        'Por favor digite um ID valido',
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
+    if (!username) {
+      ref.current.alertWithType(
+        DropdownAlertTypeMessage.Alert,
+        'Ops !!!',
+        'Por favor insira um usuario valido !!!',
       );
 
       return;
     }
 
-    //3e8522f6-7f96-42e0-b1a4-89c82f801fa6
-
-    signIn({cloudKeyId}).catch(err => {
-      ToastAndroid.showWithGravity(
-        err.message,
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
+    if (!password) {
+      ref.current.alertWithType(
+        DropdownAlertTypeMessage.Alert,
+        'Ops !!!',
+        'O campo senha não pode estar vazio !!!',
       );
-    });
+
+      return;
+    }
+
+    signIn({username, password});
   };
 
   return (
@@ -46,27 +62,44 @@ export const SignIn: React.FC = () => {
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled>
-      <S.Container>
-        <S.ImageBackground source={logos.cloudLogo} resizeMode="cover" />
-        <Input
-          text="Your Cloud ID"
-          placeholder="@usertest"
-          name="cloudKeyId"
-          control={control}
-        />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <S.Container>
+          <S.ImageBackground source={logos.cloudLogo} resizeMode="cover" />
+          <S.FormBox>
+            <Input
+              text="Username"
+              placeholder="@usertest"
+              name="username"
+              control={control}
+            />
+            <Input
+              text="Password"
+              placeholder=""
+              name="password"
+              control={control}
+              isSecure
+            />
 
-        <S.BoxBottom>
-          <LargeButton
-            text="Acessar"
-            onPress={handleSubmit(handleSignInAccount)}
-          />
+            <View style={{height: 20}} />
 
-          <S.TextBottom>Seus arquivos estão seguros conosco</S.TextBottom>
-          <S.TextBottom>
-            Read our Privacy Policy and Terms and {'\n'}Conditions
-          </S.TextBottom>
-        </S.BoxBottom>
-      </S.Container>
+            <LargeButton
+              text="Acessar"
+              onPress={handleSubmit(handleSignInAccount)}
+            />
+
+            <View style={{height: 20}} />
+
+            <S.TextBottom>Seus arquivos estão seguros conosco</S.TextBottom>
+
+            {/* <S.BoxBottom>
+              <View style={{height: 20}} />
+              <S.TextBottom>
+                Read our Privacy Policy and Terms and {'\n'}Conditions
+              </S.TextBottom>
+            </S.BoxBottom> */}
+          </S.FormBox>
+        </S.Container>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };

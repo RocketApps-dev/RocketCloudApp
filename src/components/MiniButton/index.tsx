@@ -12,6 +12,7 @@ type Props = {
   onPress?: () => void;
   inProcessing?: boolean;
   color?: string;
+  textColor?: string;
 };
 
 export const MiniButton: React.FC<Props> = ({
@@ -19,17 +20,22 @@ export const MiniButton: React.FC<Props> = ({
   title,
   inProcessing,
   onPress,
-  color
+  color,
+  textColor,
 }) => {
   return (
     <S.Container onPress={onPress} backgroundColor={color}>
       {!inProcessing ? (
         <>
-          <S.TitleButton>{title}</S.TitleButton>
-          <MaterialIcons name={icon} color={'#000'} size={RFValue(17)} />
+          <S.TitleButton textColor={textColor}>{title}</S.TitleButton>
+          <MaterialIcons
+            name={icon}
+            color={textColor ?? '#000'}
+            size={RFValue(17)}
+          />
         </>
       ) : (
-        <ActivityIndicator color="#616161" size={'small'} />
+        <ActivityIndicator color={textColor ?? '#000'} size={'small'} />
       )}
     </S.Container>
   );
